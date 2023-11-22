@@ -50,7 +50,7 @@ class CommandHandler:
 
 
     async def send_file(self, channel, file: discord.File):
-        await channel.send(file)
+        await channel.send(file=file)
 
 
     async def send(self, channel, message):
@@ -162,11 +162,11 @@ class CommandHandler:
 
         if self.is_command(args[0], 'imagegrey'):
             path = self.download_handler.download_file(args[1], 'tmp', type_verify='image')
-            image_handler = ImageHandler(message.author.id, path)
+            image_handler = ImageHandler(str(message.author.id), path)
             image_handler.greyscale()
-            await self.send_file(image_handler.get_output())
+            await self.send_file(message.channel, image_handler.get_output())
             
-            #image_handler.delete_output()
+            image_handler.delete_output()
             #await self.send(message.channel, f'O resultado é: {self.random_string(args[1])}')
             pass
 

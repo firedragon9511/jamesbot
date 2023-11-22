@@ -1,13 +1,12 @@
 from PIL import Image
-import discord
-import os
+import discord, random, os, string
 
 class ImageHandler:
     def __init__(self, requester_id: str, path: str) -> None:
         self.requester = requester_id
         self.path = path
         self.extension = path.rsplit('.',1)[1]
-        self.output_name = self.path + requester_id + '.output.' + self.extension
+        self.output_name = self.path + requester_id + '.' + ''.join([random.choice(string.ascii_letters) for x in range(int(4))]) + '.output.' + self.extension
         self.image = Image.open(self.path)
         pass
 
