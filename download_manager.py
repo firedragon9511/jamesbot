@@ -42,6 +42,6 @@ class DownloadManager:
     
 
 if __name__ == "__main__":
-    #print(DownloadManager().download_file('http://127.0.0.1:8080/obter_imagem', output='tmp'))
+    #print(DownloadManager().download_file('http://127.0.0.1:8080/exploit', output='tmp'))
     #print(os.path.join("tmp", "../test"))
     pass
