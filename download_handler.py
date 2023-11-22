@@ -2,7 +2,7 @@ import requests
 import re
 import os
 
-class DownloadManager:
+class DownloadHandler:
     def __init__(self) -> None:
 
         pass
@@ -20,12 +20,12 @@ class DownloadManager:
         return fname[0]
     
     
-    def download_file(self, url: str, output: str, type_verify='image'):
+    def download_file(self, url: str, output: str, type_verify='image') -> str:
         r = requests.get(url, allow_redirects=True)
         content_type = r.headers.get('content-type')
 
         if type_verify != '' and not content_type.startswith:
-            return
+            return None
         
         filename_from_url = None
 
@@ -38,7 +38,7 @@ class DownloadManager:
             filename = filename_from_url
 
         open(output + "/" + filename, 'wb').write(r.content)
-        return True
+        return output + "/" + filename
     
 
 if __name__ == "__main__":

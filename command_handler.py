@@ -1,4 +1,4 @@
-import discord, re
+import discord, re, random, string, traceback
 import jinja2
 from strings import Strings
 import sqlite3
@@ -6,6 +6,8 @@ from video_player import VideoPlayer
 
 from database_handler import DatabaseHandler
 from poll_handler import PollHandler
+from image_handler import ImageHandler
+from download_handler import DownloadHandler
 
 class CommandHandler:
     def __init__(self, client) -> None:
@@ -16,6 +18,8 @@ class CommandHandler:
         self.database_handler = DatabaseHandler()
 
         self.poll_handler = PollHandler()
+
+        self.download_handler = DownloadHandler()
         pass
 
     def get_args(self, command):
@@ -25,6 +29,14 @@ class CommandHandler:
 
     def calc(self, expression):
         return eval(expression)
+    
+
+    def random_string(self, size):
+        try:
+            return ''.join([random.choice(string.ascii_letters) for x in range(int(size))])
+        except Exception as e:
+            return traceback.format_exc()
+
 
     def create_embed(self, title, text):
         embed=discord.Embed(title=title, description=text)
@@ -37,6 +49,8 @@ class CommandHandler:
             await self.send(member)
 
 
+    async def send_file(self, channel, file: discord.File):
+        await channel.send(file)
 
 
     async def send(self, channel, message):
@@ -68,6 +82,8 @@ class CommandHandler:
         embed.add_field(name="!poll", value="Criar uma enquete. '<title>' '<option1,option2,option3...>'", inline=True)
         embed.add_field(name="!vote", value="Votar em uma enquete criada '<title>' '<option>'", inline=True)
         embed.add_field(name="!fpoll", value="Finalizar enquete '<title>'", inline=True)
+        embed.add_field(name="!random", value="Gerar caracteres aleatórios. <size>", inline=True)
+        embed.add_field(name="!imagegrey", value="Pega uma imagem e transforma em preto e branco. <url>", inline=True)
         await channel.send(embed=embed)
 
 
@@ -140,6 +156,21 @@ class CommandHandler:
             pass
 
 
+        if self.is_command(args[0], 'random'):
+            await self.send(message.channel, f'O resultado é: {self.random_string(args[1])}')
+            pass
+
+        if self.is_command(args[0], 'imagegrey'):
+            path = self.download_handler.download_file(args[1], 'tmp', type_verify='image')
+            image_handler = ImageHandler(message.author.id, path)
+            image_handler.greyscale()
+            await self.send_file(image_handler.get_output())
+            
+            #image_handler.delete_output()
+            #await self.send(message.channel, f'O resultado é: {self.random_string(args[1])}')
+            pass
+
+
         if invalid_command:
             try_cmd = self.database_handler.get_custom_command(str(message.guild.id), args[0].replace(self.prefix, ''))
             if try_cmd is not None:
@@ -147,5 +178,7 @@ class CommandHandler:
 
 
 if __name__ == "__main__":
-    print(CommandHandler(None).get_args("!say \"oi aaa\" oi oi"))
+    #print(CommandHandler(None).get_args("!say \"oi aaa\" oi oi"))
+    #print(CommandHandler(None).random_string('3'))
     #print(eval('__import__(\'os\').system(\'dir\')'))
+    pass

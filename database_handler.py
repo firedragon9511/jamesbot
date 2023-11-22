@@ -2,8 +2,8 @@ import sqlite3, os
 
 class DatabaseHandler:
     def __init__(self) -> None:
-        self.custom_commands_db = 'db_custom_commands.db'
-        self.guild_messages_db = 'db_guild_messages.db'
+        self.custom_commands_db = 'databases/db_custom_commands.db'
+        self.guild_messages_db = 'databases/db_guild_messages.db'
 
 
         if not os.path.exists(self.custom_commands_db):
