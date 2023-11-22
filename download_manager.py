@@ -1,5 +1,6 @@
 import requests
 import re
+import os
 
 class DownloadManager:
     def __init__(self) -> None:
@@ -19,7 +20,7 @@ class DownloadManager:
         return fname[0]
     
     
-    def download_file(self, url: str, type_verify='image'):
+    def download_file(self, url: str, output: str, type_verify='image'):
         r = requests.get(url, allow_redirects=True)
         content_type = r.headers.get('content-type')
 
@@ -36,10 +37,11 @@ class DownloadManager:
         if filename is None:
             filename = filename_from_url
 
-        open(filename, 'wb').write(r.content)
+        open(output + "/" + filename, 'wb').write(r.content)
         return True
     
 
 if __name__ == "__main__":
-    print(DownloadManager().download_file('http://google.com/favicon.ico'))
+    #print(DownloadManager().download_file('http://127.0.0.1:8080/obter_imagem', output='tmp'))
+    #print(os.path.join("tmp", "../test"))
     pass
