@@ -13,7 +13,7 @@ class JamesBotClient(discord.Client):
         print(f'Logged on as {self.user}!')
 
     async def on_message(self, message):
-        print(f'Message from {message.author}: {message.content}')
+        print(f'Message from {message.author} ID {message.author.id}: {message.content}')
         await self.command_handler.handle(message)
 
     async def on_member_join(self, member: discord.Member):

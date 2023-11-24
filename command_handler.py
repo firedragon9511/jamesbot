@@ -104,9 +104,11 @@ class CommandHandler:
 
         if args[0] == f'{self.prefix}calc':
             invalid_command = False
+            exp = ' '.join(args[1::])
+            print("Calculando a expressão: " + exp)
             await self.send(
                 message.channel, 
-                self.strings.render(self.strings.string_calc_result, {'result' : self.calc(args[1])})
+                self.strings.render(self.strings.string_calc_result, {'result' : self.calc(exp)})
             )
 
         if args[0] == f'{self.prefix}custom':
@@ -162,11 +164,14 @@ class CommandHandler:
 
         if self.is_command(args[0], 'imagegrey'):
             path = self.download_handler.download_file(args[1], 'tmp', type_verify='image')
-            image_handler = ImageHandler(str(message.author.id), path)
-            image_handler.greyscale()
-            await self.send_file(message.channel, image_handler.get_output())
+            try:
+                image_handler = ImageHandler(str(message.author.id), path)
+                image_handler.greyscale()
+                await self.send_file(message.channel, image_handler.get_output())
             
-            image_handler.delete_output()
+                image_handler.delete_output()
+            except Exception as e:
+                await self.send(message.channel, traceback.format_exc())
             #await self.send(message.channel, f'O resultado é: {self.random_string(args[1])}')
             pass
 
@@ -174,7 +179,11 @@ class CommandHandler:
         if invalid_command:
             try_cmd = self.database_handler.get_custom_command(str(message.guild.id), args[0].replace(self.prefix, ''))
             if try_cmd is not None:
+                invalid_command = False
                 await self.send(message.channel, try_cmd)
+
+        if invalid_command:
+                await self.send_embed(message.channel, self.create_embed(self.strings.string_error, 'Comando inválido!'))
 
 
 if __name__ == "__main__":
